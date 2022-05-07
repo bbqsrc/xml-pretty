@@ -1,5 +1,9 @@
-use std::{path::{PathBuf, Path}, fs::{File, write}};
+use std::{
+    fs::{write, File},
+    path::{Path, PathBuf},
+};
 
+use anyhow::Context;
 use gumdrop::Options;
 use xmlem::Document;
 
@@ -29,7 +33,6 @@ fn main() -> anyhow::Result<()> {
         return Ok(());
     };
 
-
     let output_path = if args.is_replace {
         Some(input_path.clone())
     } else if let Some(path) = args.output_path {
@@ -38,10 +41,11 @@ fn main() -> anyhow::Result<()> {
         None
     };
 
-    let text = prettify(&input_path)?;
+    let text = prettify(&input_path)
+        .with_context(|| format!("Failed to prettify '{}'", input_path.display()))?;
 
     if let Some(path) = output_path {
-        write(path, text)?;
+        write(&path, text).with_context(|| format!("Failed to write to '{}'", path.display()))?;
     } else {
         println!("{}", text);
     }
