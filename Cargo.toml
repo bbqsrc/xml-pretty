@@ -1,12 +1,15 @@
 [package]
 name = "xml-pretty"
 version = "0.1.0"
+authors = ["Brendan Molloy <brendan@bbqsrc.net>"]
 edition = "2021"
-description = "XML prettifer binary"
+description = "XML prettifer binary using xmlem"
 license = "Apache-2.0 OR MIT"
 repository = "https://github.com/bbqsrc/xml-pretty"
+categories = ["command-line-utilities", "encoding"]
+keywords = ["xml", "mlem", "cli"]
 
 [dependencies]
 anyhow = "1.0.57"
 gumdrop = "0.8.1"
-xmlem = { git = "https://github.com/bbqsrc/xmlem" }
+xmlem = "0.1.0"
