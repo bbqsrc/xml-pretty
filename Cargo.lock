@@ -637,8 +637,8 @@ dependencies = [
 
 [[package]]
 name = "xmlem"
-version = "0.0.0"
-source = "git+https://github.com/bbqsrc/xmlem#7e29f1acd1e5077af38bcdffa49b6714b407492a"
+version = "0.1.0"
+source = "git+https://github.com/bbqsrc/xmlem#9fa26c3bcbab2250ebb423f647b54d00c0112414"
 dependencies = [
  "cssparser",
  "indexmap",
