@@ -1,6 +1,6 @@
 # xml-pretty
 
-Make your XML pretty. A frontend to the (`xmlem`)[https://github.com/bbqsrc/xmlem] crate.
+Make your XML pretty. A frontend to the [`xmlem`](https://github.com/bbqsrc/xmlem) crate.
 
 ### Features
 
