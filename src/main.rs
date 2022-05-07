@@ -11,7 +11,7 @@ struct Args {
     #[options(help = "output to file")]
     output_path: Option<PathBuf>,
 
-    #[options(help = "replace input file with output")]
+    #[options(short = "r", long = "replace", help = "replace input file with output")]
     is_replace: bool,
 
     #[options(free, help = "path to XML document")]
