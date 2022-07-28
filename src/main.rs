@@ -34,6 +34,13 @@ struct Args {
         help = "Use hex entity encoding (e.g. &#xNNNN;) for all entities"
     )]
     uses_hex_entities: bool,
+
+    #[options(
+        no_short,
+        long = "no-text-indent",
+        help = "Do not prettify and indent text nodes"
+    )]
+    is_no_text_indent: bool,
 }
 
 fn main() -> anyhow::Result<()> {
@@ -68,6 +75,7 @@ fn main() -> anyhow::Result<()> {
             args.indent,
             args.max_line_length,
             args.uses_hex_entities,
+            !args.is_no_text_indent,
         )
         .with_context(|| format!("Failed to prettify '{}'", input_path.display()))?
     } else {
@@ -78,6 +86,7 @@ fn main() -> anyhow::Result<()> {
             args.indent,
             args.max_line_length,
             args.uses_hex_entities,
+            !args.is_no_text_indent,
         )
         .with_context(|| format!("Failed to prettify from stdin"))?
     };
@@ -96,10 +105,11 @@ fn prettify_file(
     indent: Option<usize>,
     max_line_length: Option<usize>,
     uses_hex_entities: bool,
+    indent_text_nodes: bool,
 ) -> anyhow::Result<String> {
     let file = File::open(path)?;
     let doc = Document::from_file(file)?;
-    Ok(prettify(doc, indent, max_line_length, uses_hex_entities))
+    Ok(prettify(doc, indent, max_line_length, uses_hex_entities, indent_text_nodes))
 }
 
 fn prettify_stdin(
@@ -107,9 +117,10 @@ fn prettify_stdin(
     indent: Option<usize>,
     max_line_length: Option<usize>,
     uses_hex_entities: bool,
+    indent_text_nodes: bool,
 ) -> anyhow::Result<String> {
     let doc = Document::from_reader(stdin)?;
-    Ok(prettify(doc, indent, max_line_length, uses_hex_entities))
+    Ok(prettify(doc, indent, max_line_length, uses_hex_entities, indent_text_nodes))
 }
 
 fn prettify(
@@ -117,6 +128,7 @@ fn prettify(
     indent: Option<usize>,
     max_line_length: Option<usize>,
     uses_hex_entities: bool,
+    indent_text_nodes: bool,
 ) -> String {
     doc.to_string_pretty_with_config(&display::Config {
         is_pretty: true,
@@ -127,6 +139,6 @@ fn prettify(
         } else {
             display::EntityMode::Standard
         },
-        indent_text_nodes: true,
+        indent_text_nodes,
     })
 }
