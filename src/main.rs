@@ -1,5 +1,6 @@
 use std::{
     fs::{write, File},
+    io::StdinLock,
     path::{Path, PathBuf},
 };
 
@@ -39,28 +40,47 @@ fn main() -> anyhow::Result<()> {
     let args = Args::parse_args_default_or_exit();
 
     let input_path = if let Some(path) = args.xml_document_path {
-        path
-    } else {
+        Some(path)
+    } else if atty::is(atty::Stream::Stdin) {
         eprintln!("ERROR: No XML document provided.");
         eprintln!("Run with -h for usage information.");
         return Ok(());
+    } else {
+        None
     };
 
     let output_path = if args.is_replace {
-        Some(input_path.clone())
+        if let Some(input_path) = input_path.as_ref() {
+            Some(input_path.clone())
+        } else {
+            eprintln!("ERROR: cannot replace 'file' when provided stdin data.");
+            return Ok(());
+        }
     } else if let Some(path) = args.output_path {
         Some(path)
     } else {
         None
     };
 
-    let text = prettify(
-        &input_path,
-        args.indent,
-        args.max_line_length,
-        args.uses_hex_entities,
-    )
-    .with_context(|| format!("Failed to prettify '{}'", input_path.display()))?;
+    let text = if let Some(input_path) = input_path {
+        prettify_file(
+            &input_path,
+            args.indent,
+            args.max_line_length,
+            args.uses_hex_entities,
+        )
+        .with_context(|| format!("Failed to prettify '{}'", input_path.display()))?
+    } else {
+        let stdin = std::io::stdin();
+        let stdin = stdin.lock();
+        prettify_stdin(
+            stdin,
+            args.indent,
+            args.max_line_length,
+            args.uses_hex_entities,
+        )
+        .with_context(|| format!("Failed to prettify from stdin"))?
+    };
 
     if let Some(path) = output_path {
         write(&path, text).with_context(|| format!("Failed to write to '{}'", path.display()))?;
@@ -71,7 +91,7 @@ fn main() -> anyhow::Result<()> {
     Ok(())
 }
 
-fn prettify(
+fn prettify_file(
     path: &Path,
     indent: Option<usize>,
     max_line_length: Option<usize>,
@@ -79,7 +99,26 @@ fn prettify(
 ) -> anyhow::Result<String> {
     let file = File::open(path)?;
     let doc = Document::from_file(file)?;
-    Ok(doc.to_string_pretty_with_config(&display::Config {
+    Ok(prettify(doc, indent, max_line_length, uses_hex_entities))
+}
+
+fn prettify_stdin(
+    stdin: StdinLock,
+    indent: Option<usize>,
+    max_line_length: Option<usize>,
+    uses_hex_entities: bool,
+) -> anyhow::Result<String> {
+    let doc = Document::from_reader(stdin)?;
+    Ok(prettify(doc, indent, max_line_length, uses_hex_entities))
+}
+
+fn prettify(
+    doc: Document,
+    indent: Option<usize>,
+    max_line_length: Option<usize>,
+    uses_hex_entities: bool,
+) -> String {
+    doc.to_string_pretty_with_config(&display::Config {
         is_pretty: true,
         indent: indent.unwrap_or(2),
         max_line_length: max_line_length.unwrap_or(120),
@@ -88,6 +127,6 @@ fn prettify(
         } else {
             display::EntityMode::Standard
         },
-        indent_text_nodes: false,
-    }))
+        indent_text_nodes: true,
+    })
 }
