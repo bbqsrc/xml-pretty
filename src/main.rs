@@ -88,5 +88,6 @@ fn prettify(
         } else {
             display::EntityMode::Standard
         },
+        indent_text_nodes: false,
     }))
 }
