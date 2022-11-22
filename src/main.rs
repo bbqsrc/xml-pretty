@@ -109,7 +109,13 @@ fn prettify_file(
 ) -> anyhow::Result<String> {
     let file = File::open(path)?;
     let doc = Document::from_file(file)?;
-    Ok(prettify(doc, indent, max_line_length, uses_hex_entities, indent_text_nodes))
+    Ok(prettify(
+        doc,
+        indent,
+        max_line_length,
+        uses_hex_entities,
+        indent_text_nodes,
+    ))
 }
 
 fn prettify_stdin(
@@ -120,7 +126,13 @@ fn prettify_stdin(
     indent_text_nodes: bool,
 ) -> anyhow::Result<String> {
     let doc = Document::from_reader(stdin)?;
-    Ok(prettify(doc, indent, max_line_length, uses_hex_entities, indent_text_nodes))
+    Ok(prettify(
+        doc,
+        indent,
+        max_line_length,
+        uses_hex_entities,
+        indent_text_nodes,
+    ))
 }
 
 fn prettify(
