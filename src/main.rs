@@ -25,6 +25,12 @@ struct Args {
     #[options(help = "number of spaces to indent (default: 2)")]
     indent: Option<usize>,
 
+    #[options(
+        short = "e",
+        help = "number of spaces to pad the end of an element without separate end-tag (default: 1)"
+    )]
+    end_pad: Option<usize>,
+
     #[options(short = "l", help = "max line length (default: 120)")]
     max_line_length: Option<usize>,
 
@@ -71,6 +77,7 @@ fn main() -> anyhow::Result<()> {
         prettify_file(
             &input_path,
             args.indent,
+            args.end_pad,
             args.max_line_length,
             args.uses_hex_entities,
             !args.is_no_text_indent,
@@ -82,6 +89,7 @@ fn main() -> anyhow::Result<()> {
         prettify_stdin(
             stdin,
             args.indent,
+            args.end_pad,
             args.max_line_length,
             args.uses_hex_entities,
             !args.is_no_text_indent,
@@ -101,6 +109,7 @@ fn main() -> anyhow::Result<()> {
 fn prettify_file(
     path: &Path,
     indent: Option<usize>,
+    end_pad: Option<usize>,
     max_line_length: Option<usize>,
     uses_hex_entities: bool,
     indent_text_nodes: bool,
@@ -110,6 +119,7 @@ fn prettify_file(
     Ok(prettify(
         doc,
         indent,
+        end_pad,
         max_line_length,
         uses_hex_entities,
         indent_text_nodes,
@@ -119,6 +129,7 @@ fn prettify_file(
 fn prettify_stdin(
     stdin: StdinLock,
     indent: Option<usize>,
+    end_pad: Option<usize>,
     max_line_length: Option<usize>,
     uses_hex_entities: bool,
     indent_text_nodes: bool,
@@ -127,6 +138,7 @@ fn prettify_stdin(
     Ok(prettify(
         doc,
         indent,
+        end_pad,
         max_line_length,
         uses_hex_entities,
         indent_text_nodes,
@@ -136,6 +148,7 @@ fn prettify_stdin(
 fn prettify(
     doc: Document,
     indent: Option<usize>,
+    end_pad: Option<usize>,
     max_line_length: Option<usize>,
     uses_hex_entities: bool,
     indent_text_nodes: bool,
@@ -143,13 +156,13 @@ fn prettify(
     doc.to_string_pretty_with_config(&display::Config {
         is_pretty: true,
         indent: indent.unwrap_or(2),
+        end_pad: end_pad.unwrap_or(1),
         max_line_length: max_line_length.unwrap_or(120),
         entity_mode: if uses_hex_entities {
             display::EntityMode::Hex
         } else {
             display::EntityMode::Standard
         },
-        end_pad: 1,
         indent_text_nodes,
     })
 }
