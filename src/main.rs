@@ -63,10 +63,8 @@ fn main() -> anyhow::Result<()> {
             eprintln!("ERROR: cannot replace 'file' when provided stdin data.");
             return Ok(());
         }
-    } else if let Some(path) = args.output_path {
-        Some(path)
     } else {
-        None
+        args.output_path
     };
 
     let text = if let Some(input_path) = input_path {
@@ -88,7 +86,7 @@ fn main() -> anyhow::Result<()> {
             args.uses_hex_entities,
             !args.is_no_text_indent,
         )
-        .with_context(|| format!("Failed to prettify from stdin"))?
+        .context("Failed to prettify from stdin")?
     };
 
     if let Some(path) = output_path {
