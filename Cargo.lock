@@ -330,9 +330,9 @@ dependencies = [
 
 [[package]]
 name = "quick-xml"
-version = "0.22.0"
+version = "0.26.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "8533f14c8382aaad0d592c812ac3b826162128b65662331e1127b45c3d18536b"
+checksum = "7f50b1c63b38611e7d4d7f68b82d3ad0cc71a2ad2e7f61fc10f1328d917c93cd"
 dependencies = [
  "memchr",
 ]
@@ -703,7 +703,7 @@ checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
 name = "xml-pretty"
-version = "0.2.1"
+version = "0.2.2"
 dependencies = [
  "anyhow",
  "atty",
@@ -713,9 +713,9 @@ dependencies = [
 
 [[package]]
 name = "xmlem"
-version = "0.1.8"
+version = "0.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "15d7eadd176b9e994da5c27acd46001a82256afa9e49b1b56b37e117e63a0aee"
+checksum = "4a04750d474ee87f51e489628046445a025a8dcaf9dc67a1c45ff04a5593436e"
 dependencies = [
  "cssparser",
  "indexmap",

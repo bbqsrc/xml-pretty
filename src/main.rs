@@ -139,6 +139,7 @@ fn prettify(
         } else {
             display::EntityMode::Standard
         },
+        end_pad: 1,
         indent_text_nodes,
     })
 }
